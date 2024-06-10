@@ -1,0 +1,40 @@
+---
+  - name: ver variables
+    hosts: all
+    tasks:
+      - name: ver nombre
+        debug:
+          msg: "{{impactedEntity}}"
+
+      - name: obtener nombre de la instancia
+        shell: echo {{impactedEntities}} > dynatrace
+    
+      - name: Obtener nombre
+        shell: cat dynatrace 
+
+      - name: cambiar , por \n
+        shell: sed 's/",/\n/g'  dynatrace > dynatrace.txt
+
+      - name: cambiar , por \n
+        shell: sed 's/},/\n/g'  dynatrace.txt > dynatrace
+
+      - name: cambiar , por \n
+        shell: sed 's/"/ /g'  dynatrace.txt > dynatrace
+
+      - name: Obtener nombre
+        shell: cat dynatrace | grep "HOST" -A 3 | grep  name | awk '{print $3}'
+        register: name
+
+      - name: eliminar 
+        shell: rm -rf dynatrace.txt
+
+      - name: eliminar 
+        shell: rm -rf dynatrace      
+
+      - name: guardar
+        shell:  echo {{message}} 
+
+      - name: Revisar dominio
+        shell: echo {{message}} > {{name.stdout}}
+        when: name.stdout is search('MaquinaOneAge') or
+              name.stdout is search('hola')
