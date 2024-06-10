@@ -1,0 +1,10 @@
+---
+- name: Zurich 1 - Detener el servicio Apache
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Detener servicio Apache
+      service:
+        name: apache2
+        state: stopped

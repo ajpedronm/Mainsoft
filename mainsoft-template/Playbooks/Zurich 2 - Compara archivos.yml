@@ -1,0 +1,64 @@
+---
+- name: Zurich 2 - Compara y copia archivo
+  hosts: all
+  become: true
+  gather_facts: yes
+  
+  tasks:
+    
+    - name: Descargar y obtener datos del archivo fuente
+      get_url:
+        url: "http://13.65.39.3/root/mainsoft-template/-/raw/master/Archivos/index.html"
+        dest: "/tmp/index.html"
+
+    - name: Obtener datos del archivo descargado
+      stat:
+        path: "/tmp/index.html"
+        get_checksum: true
+        checksum_algorithm: md5
+      register: md5_checksum2
+
+    - debug:
+        var: md5_checksum2.stat.checksum
+
+    - name: Obtener datos del archivo productivo
+      stat:
+        path: /var/www/html/wordpress/demo/index.html
+        get_checksum: true
+        checksum_algorithm: md5
+      register: md5_checksum
+  
+    - debug:
+        var: md5_checksum.stat.checksum
+
+    - name: Comparación  
+      assert:
+       that:
+         - md5_checksum.stat.exists == md5_checksum2.stat.exists
+         - md5_checksum.stat.checksum == md5_checksum2.stat.checksum
+       success_msg: "Los archivos son iguales. No es necesario realizar cambios."
+       fail_msg: "Los archivos son diferentes. Se requiere acción."
+      register: assert_result
+      ignore_errors: true
+
+    - name: Obtener fecha y hora
+      command: date +'%Y%m%d_%H%M%S'
+      register: timestamp
+
+    - name: Renombrar el archivo existente si está presente
+      command: mv index.html "index-{{ timestamp.stdout }}.html"
+      args:
+        chdir: /var/www/html/wordpress/demo
+      when: assert_result.failed
+
+    - name: Copiar archivo
+      command: cp /tmp/index.html /var/www/html/wordpress/demo/
+      when: assert_result.failed
+      
+    - name: Actualizar permisos
+      command: chmod 644 /var/www/html/wordpress/demo/index.html
+      when: assert_result.failed
+
+    - name: Cambiar el owner
+      command: chown ubuntu:ubuntu /var/www/html/wordpress/demo/index.html
+      when: assert_result.failed

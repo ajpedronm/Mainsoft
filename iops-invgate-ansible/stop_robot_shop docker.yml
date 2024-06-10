@@ -1,0 +1,11 @@
+---
+- name: Stop RobotShop
+  hosts: all
+  gather_facts: yes
+  become: yes
+  tasks:
+
+    - name: Stop a container
+      docker_container:
+        name: robot-shop_web_1
+        state: stopped

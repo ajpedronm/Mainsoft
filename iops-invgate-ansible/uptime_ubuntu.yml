@@ -1,0 +1,12 @@
+---
+- name: Sacar uptime
+  hosts: all
+  gather_facts: yes
+  become: yes
+  tasks:
+  - name: Sacar uptime
+    register: uptimeoutput
+    command: "uptime"
+
+  - debug:
+      var: uptimeoutput.stdout_lines

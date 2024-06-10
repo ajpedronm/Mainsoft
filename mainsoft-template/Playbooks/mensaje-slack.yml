@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+
+  - name: Notificación al slack
+    slack:
+        token: T4CLWDWLB/B01UT2FRD8D/xYig601CDVFy8GOikzFiDXVa
+        msg: 'Mensaje enviado desde Ansible'
+        channel: '#ansible-tower'
+    delegate_to: localhost

@@ -1,0 +1,15 @@
+---
+  - hosts: ubuntu
+    become: yes
+    roles:
+      - instana.instana-agent-ansible
+    vars:
+      instana_agent_flavor: "dynamic"
+      instana_agent_jdk: "/opt/jdk"
+      instana_agent_updates_enabled: yes
+      instana_agent_updates_interval: "DAY"
+      instana_agent_updates_time: "04:30"
+      instana_agent_zone: "prod"
+      instana_agent_agent_key: 24er3XQnSDeMEHxcMZIydQ
+      instana_agent_endpoint_host: ingress-coral-saas.instana.io
+      instana_agent_endpoint_port: 443

@@ -1,0 +1,21 @@
+---
+  - name: Reinicio de servicio nginx
+    hosts: all
+    gather_facts: yes
+    become : true
+    tasks:
+      - name: reinicio servicio nginx
+        shell: sudo systemctl start nginx
+      
+    #  - name: inicio
+    #    service:
+    #      name: nginx
+    #      enabled: yes
+    #      state: started
+
+    #  - name: reinicio
+    #    service:
+    #      name: nginx
+    #      enabled: yes
+    #      state: restarted
+

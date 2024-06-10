@@ -1,0 +1,30 @@
+---
+- name: Renombrar y copiar archivo
+  hosts: all
+  gather_facts: yes
+  become: yes
+  
+  tasks:
+    - name: Obtener fecha y hora
+      command: date +'%Y%m%d_%H%M%S'
+      register: timestamp
+
+    - name: Renombrar el archivo existente si está presente
+      command: mv index.html "index-{{ timestamp.stdout }}.html"
+      args:
+        chdir: /var/www/html/wordpress/demo
+
+    - name: Ejecutar comando curl
+      command: curl -o /var/www/html/wordpress/demo/index.html "http://13.65.39.3/root/mainsoft-template/-/raw/master/Archivos/index.html"
+      register: resultado_curl
+
+    - name: Actualizar permisos
+      command: chmod 644 /var/www/html/wordpress/demo/index.html
+    
+    - name: Cambiar el owner
+      command: chown www-data:www-data /var/www/html/wordpress/demo/index.html
+
+    - name: Subir servicio Apache
+      service:
+        name: apache2
+        state: started

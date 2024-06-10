@@ -1,0 +1,26 @@
+---
+- name: Reinicio IIS
+  hosts: all
+  gather_facts: false
+  # become: false
+
+  tasks:
+
+  - name: Hacer Ping
+    action: ping
+
+  - name: recibir ImpactedEntity
+    debug:
+      msg: "{{ImpactedEntity}}"
+    with_items:
+      - {{message}}
+
+#  - name: desplegar mensaje
+#    debug:
+#      msg: "{{message}}"
+    # with_items: "{{message}}"
+
+#  - name: reinicio servicio mysql
+#    shell: sudo systemctl start mysql
+
+...

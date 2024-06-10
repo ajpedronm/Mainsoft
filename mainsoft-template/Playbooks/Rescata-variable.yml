@@ -1,0 +1,19 @@
+---
+  - name: ver variables
+    hosts: localhost
+    tasks:
+      - name: ver nombre
+        debug:
+          msg: "{{impactedEntity}}"       
+
+      - name: obtener nombre de la instancia
+        shell: echo {{impactedEntities}} | awk '{print $4}'
+        register: name
+
+      - name: guardar
+        blockinfile:
+          block: "{{message}}"
+          dest: "{{name.stdout}}.txt"
+
+      - name: ver
+        shell: cat {{name.stdout}}.txt

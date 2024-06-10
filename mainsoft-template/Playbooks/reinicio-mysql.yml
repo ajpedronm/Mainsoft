@@ -1,0 +1,23 @@
+---
+  - name: Reinicio de servicio mysql
+    hosts: all
+    gather_facts: yes
+    tasks:
+
+      - name: reinicio servicio mysql
+        shell: sudo systemctl start mysql
+      
+    #  - name: inicio
+    #    service:
+    #      name: mysql
+    #      enabled: yes
+    #      state: started
+
+    #  - name: reinicio
+    #    service:
+    #      name: mysql
+    #      enabled: yes
+    #      state: restarted
+    
+    #- name: restart mysql
+    #  service: "name={{ mysql_daemon }} state=restarted sleep=5"

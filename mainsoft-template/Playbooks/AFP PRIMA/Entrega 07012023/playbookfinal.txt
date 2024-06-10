@@ -1,0 +1,68 @@
+---
+- name: Playbook para sacar parches windows y uptime linux
+  hosts: windows
+  become: false
+  gather_facts: false
+  tasks:
+
+  - name: Crea directorio de temp windows
+    ansible.windows.win_file:
+      path: c:/users/ansible/desktop/temp/
+      state: directory
+
+  - name: copiar script hacia windows
+    ansible.windows.win_copy:
+      src: /etc/ansible/sacaparches.ps1
+      dest: c:\users\ansible\desktop\temp\sacaparches.ps1
+
+  - name: Ejecuta powershell sacaparches.ps1 en windows
+    ansible.windows.win_shell: c:\users\ansible\desktop\temp\sacaparches.ps1
+    args:
+      chdir: c:\users\ansible\desktop\temp
+
+  - name: Busca archivo txt en windows
+    ansible.windows.win_find:
+      paths: c:\users\ansible\desktop\Temp
+      patterns: [ '*.txt' ]
+    register: archivos
+
+  - name: Trae archivo txt desde windows
+    ansible.builtin.fetch:
+      src: "{{ item.path }}"
+      dest: '/etc/ansible/txt/'
+      flat: yes
+    with_items: "{{ archivos.files }}"
+
+  - name: Borra ditectorio temp en windows
+    ansible.windows.win_file:
+      path: c:/users/ansible/desktop/temp/
+      state: absent
+
+- name: Sacar uptime desde linux
+  hosts: ubuntu
+  tasks:
+
+  - name: Sacar uptime
+    register: uptimeoutput
+    command: "uptime"
+
+  - debug:
+      var: uptimeoutput.stdout_lines
+
+  - name: Copiar resultado en archivo desde linux
+    copy:
+      content: "{{ uptimeoutput.stdout_lines }}"
+      dest: "{{ inventory_hostname }}.txt"
+
+  - name: Busca archivo txt en linux
+    ansible.builtin.find:
+      paths: '/root'
+      patterns: '*.txt'
+    register: archivo
+
+  - name: Trae archivo txt desde linux
+    ansible.builtin.fetch:
+      src: "{{ item.path }}"
+      dest: '/etc/ansible/txt/'
+      flat: yes
+    with_items: "{{ archivo.files }}"

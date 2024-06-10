@@ -1,0 +1,12 @@
+---
+- name: Reinicio Servicio Web
+  hosts: webserver-win
+  gather_facts: true
+  # become: false
+
+  tasks:
+  - name: Reiniciar w3svc
+    win_shell: get-service -name w3svc | Start-Service
+
+  - name: Status
+    win_shell: get-service -name w3svc

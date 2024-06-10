@@ -1,0 +1,10 @@
+---
+- name: Shell module example
+  hosts: ubuntu
+  tasks:
+  - name: Desinstalando OneAgent - Dynatrace
+    shell:
+      "/opt/dynatrace/oneagent/agent/uninstall.sh"
+    register: os_info
+  - debug:
+      msg: "{{os_info.stdout_lines}}"

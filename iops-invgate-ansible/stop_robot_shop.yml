@@ -1,0 +1,9 @@
+---
+- name: Stop RobotShop
+  hosts: all
+  gather_facts: yes
+  become: yes
+  tasks:
+
+    - name: Stop RobotShop
+      command: docker stop robot-shop_web_1

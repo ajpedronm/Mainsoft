@@ -1,0 +1,15 @@
+---
+- hosts: all
+  gather_facts: yes
+  task:
+    - name: incident data
+      servicenow.servicenow.snow_record:
+      username: ansible
+      password: Caracas2511
+      instance: mainsoftsademo1.service-now.com
+      state: present
+      data:
+        short_description: "This is a test incident opened by Ansible on developenmt environment"
+        severity: 2
+        priority: 2
+      register: new_incident

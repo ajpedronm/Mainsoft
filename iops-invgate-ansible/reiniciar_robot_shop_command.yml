@@ -1,0 +1,39 @@
+---
+- name: Reiniciar Robot-Shop Comando
+  hosts: all
+  gather_facts: yes
+  become: yes
+  tasks:
+
+    - name: Start RobotShop
+      command: docker start "{{ container_name_to_start }}"
+      register: robot_shop_container_status
+      ignore_errors: yes
+
+    - name: Mostrar estado del Robot-Shop 
+      debug:
+        var: robot_shop_container_status
+
+    - name: Definir cuerpos para solicitud POST
+      set_fact:
+        post_body_started:
+          status: "started"
+          message: "Robot-Shop se ha reiniciado con exito"
+        post_body_stopped:
+          status: "stopped"
+          message: "Robot-Shop NO se ha podido reiniciar."
+
+    - name: Convertir cuerpos a JSON
+      set_fact:
+        post_body_started_json: "{{ post_body_started | to_json }}"
+        post_body_stopped_json: "{{ post_body_stopped | to_json }}"
+
+    - name: Enviar solicitud POST con estado del servicio
+      uri:
+        url: "{{ url_webhook }}"
+        method: POST
+        body: "{{ post_body_started_json if robot_shop_container_status.changed else post_body_stopped_json }}"
+        status_code: 200
+        body_format: json
+      when: robot_shop_container_status is defined
+      ignore_errors: yes

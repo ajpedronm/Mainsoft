@@ -1,0 +1,9 @@
+---
+  - name: Reinicio de servicio Apache
+    hosts: all
+    gather_facts: yes
+    tasks:
+
+      - name: reinicio servicio Apache
+        shell: sudo systemctl status apache2
+        shell: sudo systemctl start apache2

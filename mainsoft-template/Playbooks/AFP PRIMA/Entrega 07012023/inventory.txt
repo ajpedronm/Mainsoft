@@ -1,0 +1,16 @@
+[windows]
+192.168.1.36
+192.168.1.38
+
+[windows:vars]
+ansible_user=ansible
+ansible_password=password
+ansible_port=5986
+ansible_connection=winrm
+ansible_winrm_transport=basic
+ansible_winrm_server_cert_validation=ignore
+
+[ubuntu]
+192.168.1.41 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_pass=password
+192.168.1.42 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_pass=password
+

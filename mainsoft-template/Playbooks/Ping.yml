@@ -1,0 +1,8 @@
+---
+- name: Ping a equipo Windows
+  hosts: all
+  gather_facts: no
+  
+  tasks:
+    - name: Realizar ping a equipo Windows
+      ping:

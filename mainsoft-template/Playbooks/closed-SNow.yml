@@ -1,0 +1,13 @@
+---
+- name: Close change_request
+  servicenow.itsm.change_request:
+    instance:
+      host: https://mainsoftsademo2.service-now.com
+      username: admin
+      password: Mainsoft*123
+
+    state: closed
+    close_code: "successful"
+    close_notes: "Closed"
+    assignment_group: some.group
+    number: CHG0030031

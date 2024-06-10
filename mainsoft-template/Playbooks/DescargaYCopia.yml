@@ -1,0 +1,40 @@
+---
+- name: Prueba
+  hosts: all
+  become: true
+  gather_facts: yes
+
+  tasks:
+
+    - name: Copia Archivos
+      get_url:
+        url: "http://13.65.39.3/root/mainsoft-template/-/raw/master/Archivos/index.html"
+        dest: "/tmp/index.html"
+
+    - name: Obtener datos del archivo descargado
+      stat:
+        path: "/tmp/index.html"
+        get_checksum: true
+        checksum_algorithm: md5
+      register: md5_checksum2
+
+    - debug:
+        var: md5_checksum2.stat.checksum
+
+    - name: Obtener datos del archivo productivo
+      stat:
+        path: /var/www/html/wordpress/demo/index.html
+        get_checksum: true
+        checksum_algorithm: md5
+      register: md5_checksum
+  
+    - debug:
+        var: md5_checksum.stat.checksum
+
+    - name: Comparación  
+      assert:
+       that:
+#         - md5_checksum.stat.exists == md5_checksum2.stat.exists
+         - md5_checksum.stat.checksum == md5_checksum2.stat.checksum
+       success_msg: "Los archivos son iguales. No es necesario realizar cambios."
+       fail_msg: "Los archivos son diferentes. Se requiere acción."

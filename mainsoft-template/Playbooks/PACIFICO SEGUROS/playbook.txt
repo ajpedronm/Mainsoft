@@ -1,0 +1,8 @@
+---
+- hosts: ubuntu
+  tasks:
+  - name: Crear archivo empty
+    file:
+      path: "/home/archivo4.txt"
+      state: touch
+    become: yes

@@ -1,0 +1,14 @@
+---
+
+- hosts: all
+  become: yes
+  become_user: root
+  
+  tasks:
+
+      - name: Reinicio de máquina Linux
+        reboot:
+          reboot_timeout: 3600
+
+      - name: Ver host name
+        shell: hostname

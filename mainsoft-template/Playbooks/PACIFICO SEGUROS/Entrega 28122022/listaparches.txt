@@ -1,0 +1,40 @@
+---
+- name: Copiar archivo a windows
+  hosts: all
+  become: false
+  gather_facts: false
+  tasks:
+
+  - name: Crea directorio de temp
+    ansible.windows.win_file:
+      path: c:/users/ansible/desktop/temp/
+      state: directory
+
+  - name: copiar script hacia windows
+    ansible.windows.win_copy:
+      src: /etc/ansible/sacaparches.ps1
+      dest: c:\users\ansible\desktop\temp\sacaparches.ps1
+
+  - name: Ejecuta powershell sacaparches.ps1
+    ansible.windows.win_shell: c:\users\ansible\desktop\temp\sacaparches.ps1
+    args:
+      chdir: c:\users\ansible\desktop\temp
+
+  - name: Busca archivo txt
+    ansible.windows.win_find:
+      paths: c:\users\ansible\desktop\Temp
+      patterns: [ '*.txt' ]
+    register: archivos
+
+  - name: Trae archivo txt
+    ansible.builtin.fetch:
+      src: "{{ item.path }}"
+      dest: '/etc/ansible/psh/'
+      flat: yes
+    with_items: "{{ archivos.files }}"
+
+  - name: Borra ditectorio temp
+    ansible.windows.win_file:
+      path: c:/users/ansible/desktop/temp/
+      state: absent
+

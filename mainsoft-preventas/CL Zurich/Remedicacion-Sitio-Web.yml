@@ -1,0 +1,44 @@
+---
+- name: Verificar y reemplazar archivo
+  hosts: all
+  gather_facts: yes
+  become: yes
+  
+  tasks:
+    - name: Obtener datos del archivo productivo
+      stat:
+        path: /var/www/html/wordpress/demo/
+      register: index1_info
+
+    - name: Obtener datos del archivo fuente
+      stat:
+        path: "http://13.65.39.3/root/mainsoft-template/-/raw/master/Archivos/index.html"
+      register: index2_info
+
+    - name: Comparar los archivos
+      set_fact:
+        archivos_diferentes: "{{ index1_info.stat.md5 != index2_info.stat.md5 }}"
+
+    - name: Obtener la fecha
+      command: date +'%Y%m%d_%H%M%S'
+      register: timestamp
+
+    - name: Renombrar archivo fuenteCopiar el archivo en caso de diferencias
+      copy:
+        src: "http://13.65.39.3/root/mainsoft-template/-/raw/master/Archivos/index.html"
+        dest: /var/www/html/wordpress/demo/
+      when: archivos_diferentes
+
+    - name: Segunda copia
+      command: mv index.html "index-{{ timestamp.stdout }}.html"
+      args:
+        chdir: /var/www/html/wordpress/demo
+      command: curl -o /var/www/html/wordpress/demo/index.html "http://13.65.39.3/root/mainsoft-template/-/raw/master/Archivos/index.html"
+      register: resultado_curl
+   
+    - name: Actualizar permisos
+      command: chmod 644 /var/www/html/wordpress/demo/index.html
+    
+    - name: Cambiar el owner
+      command: chown ubuntu:ubuntu /var/www/html/wordpress/demo/index.html
+       

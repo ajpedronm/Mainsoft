@@ -1,0 +1,22 @@
+---
+  - name: Reinicio de servicio Apache2 en AWS
+    hosts: all
+    gather_facts: yes
+    tasks:
+      - name: reinicio servicio Apache
+        shell: sudo systemctl status apache2
+        shell: sudo systemctl start apache2
+
+      - name: Close change_request
+        servicenow.itsm.change_request:
+          instance:
+            host: https://mainsoftsademo2.service-now.com
+            username: admin
+            password: Mainsoft*123
+            
+
+          state: closed
+          close_code: "successful"
+          close_notes: "Cierre desde Ansible"
+          # assignment_group: some.group
+          number: CHG0030048

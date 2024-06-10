@@ -1,0 +1,15 @@
+---
+  - name: ver variables
+    hosts: all
+    tasks:
+      - name: ver nombre
+        debug:
+          msg: "{{impactedEntity}}" 
+
+      - name: ver mensaje
+        debug:
+          msg: "{{message}}"
+        # with_items: "{{message}}"
+
+      - name: reinicio servicio mysql
+        shell: sudo systemctl start mysql

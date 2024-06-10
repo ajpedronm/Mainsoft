@@ -1,0 +1,11 @@
+---
+  - name: Reinicio de DB MariaBD
+    hosts: all
+    gather_facts: yes
+    tasks:
+
+      - name: verificar estado DB MariaDB
+        shell: sudo systemctl status mariadb.service
+
+      - name: reinicio DB MariaDB
+        shell: sudo systemctl start mariadb.service

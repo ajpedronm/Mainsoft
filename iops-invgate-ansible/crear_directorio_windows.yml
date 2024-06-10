@@ -1,0 +1,27 @@
+---
+  - name: Crear directorio Linux
+    hosts: all
+    gather_facts: yes
+    become: yes
+    tasks:
+
+      - name: Crear directorio
+        file:
+          path: /home/ubuntu/directorio_nuevo_ansible
+          state: directory
+
+      - name: Instalar Nginx
+        apt:
+          name: nginx
+          state: present
+
+      - name: Copiar archivo de configuración de Nginx
+        template:
+          src: nginx.conf.j2
+          dest: /etc/nginx/nginx.conf
+        notify: Reiniciar Nginx
+
+      - name: Reiniciar servicio de Nginx
+        service:
+          name: nginx
+          state: restarted

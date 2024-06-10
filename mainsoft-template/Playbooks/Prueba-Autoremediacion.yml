@@ -1,0 +1,53 @@
+---
+- name: Verificar y reemplazar archivo
+  hosts: all
+  gather_facts: yes
+  become: yes
+  
+  tasks:
+    - name: Obtener fecha y hora
+      command: date +'%Y%m%d_%H%M%S'
+      register: timestamp
+
+    - name: Renombrar el archivo existente si está presente
+      command: mv index.html "index-{{ timestamp.stdout }}.html"
+      args:
+        chdir: /var/www/html/wordpress/demo
+      
+    - name: Obtener datos del archivo productivo
+      stat:
+        path: /var/www/html/wordpress/demo/
+      register: index1_info
+
+    - name: Obtener datos del archivo fuente
+      stat:
+        path: "http://13.65.39.3/root/mainsoft-template/-/raw/master/Archivos/index.html"
+      register: index2_info
+      
+    - name: Otra comparación  
+      assert:
+       that:
+         - index1_info.stat == index2_info.stat
+       success_msg: "Los archivos son iguales. No es necesario realizar cambios."
+       fail_msg: "Los archivos son diferentes. Se requiere acción."
+
+    - name: Comparar los archivos
+      set_fact:
+        archivos_diferentes: "{{ index1_info.stat != index2_info.stat }}"
+
+    - name: Renombrar archivo fuenteCopiar el archivo en caso de diferencias
+      copy:
+        src: "http://13.65.39.3/root/mainsoft-template/-/raw/master/Archivos/index.html"
+        dest: /var/www/html/wordpress/demo/
+      when: archivos_diferentes.changed
+
+    - name: Ejecutar comando curl
+      command: curl -o /var/www/html/wordpress/demo/index.html "http://13.65.39.3/root/mainsoft-template/-/raw/master/Archivos/index.html"
+      register: resultado_curl
+      when: archivos_diferentes      
+
+    - name: Cambia mode
+      command: chmod 644 /var/www/html/wordpress/demo/index.html
+
+    - name: Cambia dueño
+      command: chown ubuntu:ubuntu /var/www/html/wordpress/demo/index.html

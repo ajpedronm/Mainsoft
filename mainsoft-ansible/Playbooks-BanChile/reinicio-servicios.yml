@@ -1,0 +1,14 @@
+---
+- name: Reinicio de IIS
+  hosts: all
+  task:
+    - name: reiniciar IIS
+       win_command:iisreset /stop
+       win_command:iisreset /start
+
+  task:
+    - name: reinicio como servicio
+       win_service:
+         name: iis
+         state: stopped
+         state: start

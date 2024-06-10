@@ -1,0 +1,52 @@
+---
+  - name: Reiniciar servicio de Nginx
+    hosts: all
+    gather_facts: yes
+    become: yes
+    tasks:
+
+      - name: Reiniciar servicio de Nginx
+        service:
+          name: nginx
+          state: restarted
+        register: nginx_service_status
+        ignore_errors: yes
+
+      - name: Mostrar estado del servicio de Nginx
+        debug:
+          var: nginx_service_status
+
+      #- name: Enviar estado del servicio por POST
+      #  uri:
+      #    url: "{{ url_webhook }}"
+      #    method: POST
+      #    body: "{{ nginx_service_status }}"
+      #    body_format: json
+      #    status_code: 200
+      #    headers:
+      #      Content-Type: "application/json"
+      #  ignore_errors: yes
+
+      - name: Definir cuerpos para solicitud POST
+        set_fact:
+          post_body_started:
+            status: "started"
+            message: "El servicio de Nginx se ha reiniciado y está en estado 'started'"
+          post_body_stopped:
+            status: "stopped"
+            message: "El servicio de Nginx se ha reiniciado pero no está en estado 'started'."
+
+      - name: Convertir cuerpos a JSON
+        set_fact:
+          post_body_started_json: "{{ post_body_started | to_json }}"
+          post_body_stopped_json: "{{ post_body_stopped | to_json }}"
+
+      - name: Enviar solicitud POST con estado del servicio
+        uri:
+          url: "{{ url_webhook }}"
+          method: POST
+          body: "{{ post_body_started_json if nginx_service_status.changed else post_body_stopped_json }}"
+          status_code: 200
+          body_format: json
+        when: nginx_service_status is defined
+        ignore_errors: yes

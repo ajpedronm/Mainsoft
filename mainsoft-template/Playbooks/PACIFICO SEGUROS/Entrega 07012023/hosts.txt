@@ -1,0 +1,5 @@
+[ubuntu]
+0.0.0.0 ansible_connection=ssh ansible_ssh_user=userubuntu ansible_ssh_pass=password
+
+0.0.0.0 (es la ip del server linux o ubuntu)
+

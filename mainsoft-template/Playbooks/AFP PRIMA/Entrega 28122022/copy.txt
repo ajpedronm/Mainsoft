@@ -1,0 +1,10 @@
+---
+- name: copiar archivo a windows
+- hosts: all
+  become: false
+  garher_facts: false
+  tasks:
+  - name: Copiar scripts hacia windows
+    ansible.windows.win_copy:
+      scr: /etc/ansible/psh/showparches.ps1
+      dest: c:\users\ansible\desktop\temp\sowparches.ps1

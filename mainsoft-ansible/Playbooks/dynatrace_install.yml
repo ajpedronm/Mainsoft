@@ -1,0 +1,17 @@
+---
+- name: Install Dynatrace OneAgent
+  hosts: ubuntu
+  collections:
+    - dynatrace.oneagent
+  vars_files:
+    - /etc/ansible/dynatrace/credentials.yml
+  vars:
+    oneagent_download_dir: /opt
+    oneagent_version: latest
+    oneagent_install_args:
+      - INSTALL_PATH=/opt/dynatrace
+      - --set-host-group=Ubuntu-tavo
+      - --set-network-zone=Lima-tavo
+  tasks:
+    - import_role:
+        name: oneagent

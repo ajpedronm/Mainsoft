@@ -1,0 +1,6 @@
+---
+- name: Iniciar contenedor Docker
+  hosts: tu_host
+  tasks:
+    - name: "Iniciar contenedor"
+      command: "docker start robot-shop_web_1"

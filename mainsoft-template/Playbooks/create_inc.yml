@@ -1,0 +1,27 @@
+---
+- name: Abrir incidencia en ServiceNow
+  hosts: localhost
+  gather_facts: false
+  vars:
+    servicenow_url: "https://mainsoftsademo4.service-now.com/api/now/table/incident"
+    servicenow_user: "admin"
+    servicenow_password: "Caracas*2511"
+    ansible_python_interpreter: "/usr/bin/python3"
+  tasks:
+    - name: Crear incidencia en ServiceNow
+      uri:
+        url: "{{ servicenow_url }}"
+        method: POST
+        user: "{{ servicenow_user }}"
+        password: "{{ servicenow_password }}"
+        body_format: json
+        body:
+          short_description: "Incidencia por indisponibilidad de servicio MySQL"
+          description: "Incidencia por un servicio detenido en un servidor unix"
+          caller_id: "admin"
+          cmdb_ci: "MaquinaOneAgent"
+      register: response
+
+#    - name: Mostrar respuesta de ServiceNow
+#      debug:
+#        var: response
